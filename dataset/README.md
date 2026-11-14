@@ -3,7 +3,7 @@
 本目录提供 1,046 条原始候选及 870 条复核确认记录，两张注释表均为九个字段。
 
 - [satd_comments.csv](satd_comments.csv)：1,046 行，九个字段。
-- [satd_comments_reviewed.csv](satd_comments_reviewed.csv)：870 行，AI 辅助上下文核验后，由研究者确认待定项的人工复核确认版，覆盖 263 个仓库、548 个工作流。
+- [satd_comments_reviewed.csv](satd_comments_reviewed.csv)：876 行，由研究者确认待定项的人工复核确认版，覆盖 263 个仓库、552 个工作流。
 - [projects.csv](projects.csv)：对应的 300 个仓库及综合排名。
 - [checksums.json](checksums.json)：三张表的 SHA-256。
 
