@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/NAIST-SE/SATDinBuildSystems",
+  "commit": "329a2428045fc6fd4541013c65287eb4917732b1",
+  "files": {
+    "Scripts/identify_SATD_comments.py": {
+      "sha256": "005163c4d0b20f826a22ac8d4ac7fa5e523e683f61d5f2ce49441b0aac290570",
+      "git_blob": "5c8b38a1c22ba7a9fdcce15c9dd86f2ae6a44ecc"
+    },
+    "Dataset/keywords_list.txt": {
+      "sha256": "c29084ca69ff0079548917d435a527b7c9a622d4771c0b49cdc8a74db78b0189",
+      "git_blob": "a3d6acc299b4dd2a3cd0f6a05ddf0be96edb5c2e"
+    }
+  }
+}

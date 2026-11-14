@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.deps/
+/output/
+code/internal/output/
+code/internal/work/
+code/internal/workflows/
+code/internal/workflows.csv
+code/internal/repositories.csv
+*.duckdb
+*.duckdb.wal
+*.sqlite
+*.partial
+.env
+
+/external/

@@ -1,0 +1,7 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+# Preserve original CSV bytes and whitespace inside source comments.
+*.csv -text -whitespace
+# Keep whitespace in the pinned upstream reference unchanged.
+code/internal/reference/** -whitespace

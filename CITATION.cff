@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite this dataset version and retain the source attribution in THIRD_PARTY_NOTICES.md."
+type: dataset
+title: "SATD candidates in GitHub Actions: 1,046 occurrences from 300 repositories"
+authors:
+  - name: "cjllz"
+repository-code: "https://github.com/cjllz/GHA_SATD"
+url: "https://github.com/cjllz/GHA_SATD"
+version: "0.2.0-top300"
+date-released: "2026-11-14"
+abstract: "Keyword-matched candidates in latest archived workflows, selected by repository eligibility and an equal-weight rank composite of size, age and stars. Semantic confirmation is pending."

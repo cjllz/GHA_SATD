@@ -1,0 +1,10 @@
+{
+  "dataset/projects.csv": {
+    "sha256": "c4997840778aeb99971a81d2a660255cbc88abcd336069af5db90ee10cc9cd39",
+    "bytes": 29377
+  },
+  "dataset/satd_comments.csv": {
+    "sha256": "dfc1a2f557bc7db94bd0303f8ba51d2e9e967378ce0421c2dbb914d4873030ba",
+    "bytes": 551001
+  }
+}
