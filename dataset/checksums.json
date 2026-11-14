@@ -6,5 +6,9 @@
   "dataset/satd_comments.csv": {
     "sha256": "dfc1a2f557bc7db94bd0303f8ba51d2e9e967378ce0421c2dbb914d4873030ba",
     "bytes": 551001
+  },
+  "dataset/satd_comments_reviewed.csv": {
+    "sha256": "9cc19d3e817846de064e332abe4b027794491b12fb9cbfcf2bc914ea660eb0ac",
+    "bytes": 451133
   }
 }
