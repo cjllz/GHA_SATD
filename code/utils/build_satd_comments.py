@@ -1,7 +1,8 @@
 """YAML adaptation of NAIST-SE/SATDinBuildSystems.
 
 Upstream commit: 329a2428045fc6fd4541013c65287eb4917732b1.
-Unmodified source and keyword bytes: reference/SATDinBuildSystems/.
+Original source: https://github.com/NAIST-SE/SATDinBuildSystems/tree/329a2428045fc6fd4541013c65287eb4917732b1
+The original 73-keyword list is retained in ../keywords.txt.
 The keyword expression is retained; local history input/output are adapters.
 """
 from pathlib import Path
@@ -19,13 +20,13 @@ from concurrent.futures import ProcessPoolExecutor, wait, FIRST_COMPLETED
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / '.deps'))
-sys.path.insert(0, str(ROOT / 'scripts'))
+sys.path.insert(0, str(ROOT / 'utils'))
 import duckdb
 
 
 @lru_cache(maxsize=1)
 def load_keywords() -> list[str]:
-    data = (ROOT / 'config/keywords_list.txt').read_bytes()
+    data = (ROOT / 'keywords.txt').read_bytes()
     if hashlib.sha256(data).hexdigest() != 'c29084ca69ff0079548917d435a527b7c9a622d4771c0b49cdc8a74db78b0189':
         raise ValueError('Keyword bytes differ from pinned upstream')
     keywords = data.decode('utf-8').split(', ')
@@ -97,10 +98,10 @@ def _sha_file(path):
 
 def _fingerprint(dataset_dir):
     h = hashlib.sha256()
-    for path in sorted((ROOT/'scripts').glob('*')):
+    for path in sorted((ROOT/'utils').glob('*')):
         if path.suffix in ('.py','.ps1'):
             h.update(path.name.encode()); h.update(path.read_bytes())
-    h.update((ROOT/'config/keywords_list.txt').read_bytes())
+    h.update((ROOT/'keywords.txt').read_bytes())
     versions={name:importlib.metadata.version(name) for name in
               ('duckdb','ruamel.yaml','PyYAML','tree-sitter','tree-sitter-bash')}
     h.update(json.dumps(versions,sort_keys=True).encode())

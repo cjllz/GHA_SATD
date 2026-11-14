@@ -12,7 +12,7 @@ import sqlite3
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / 'scripts'))
+sys.path.insert(0, str(ROOT / 'utils'))
 from build_satd_comments import FIELDS, SAMPLE_FIELDS
 
 

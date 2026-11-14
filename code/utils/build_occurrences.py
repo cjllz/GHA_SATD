@@ -16,7 +16,7 @@ import sqlite3
 import sys
 import time
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / '.deps'))
 import duckdb
 
@@ -261,8 +261,8 @@ def main():
     if args.state:
         args.statuses = args.output.parent / 'file_status.csv.gz'
         export_status(args.state, args.statuses)
-    frozen_code = sorted((ROOT / 'scripts').glob('*.py')) + sorted((ROOT / 'scripts').glob('*.ps1'))
-    frozen_code += [ROOT / 'config/keywords_list.txt', ROOT / 'postprocess/export_readable_satd.py']
+    frozen_code = sorted((ROOT / 'utils').glob('*.py')) + sorted((ROOT / 'utils').glob('*.ps1'))
+    frozen_code += [ROOT / 'keywords.txt', ROOT / 'utils/export_readable_satd.py']
     result = build(args.candidates, args.history, args.statuses, args.output,
                    expected_sha=args.expected_sha, freeze_paths=frozen_code)
     print(json.dumps({k: result[k] for k in ['occurrences', 'mapped_candidates', 'unmapped_candidates', 'duplicate_source_rows']}, indent=2))

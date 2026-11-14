@@ -3,11 +3,11 @@ __pycache__/
 .pytest_cache/
 .deps/
 /output/
-code/internal/output/
-code/internal/work/
-code/internal/workflows/
-code/internal/workflows.csv
-code/internal/repositories.csv
+code/output/
+code/work/
+code/workflows/
+code/workflows.csv
+code/repositories.csv
 *.duckdb
 *.duckdb.wal
 *.sqlite

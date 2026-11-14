@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from fractions import Fraction
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 FIELDS = ['satd_comment_id','name','file_hash','comment_text','normalized_text',
           'matched_keywords','line_start','line_end','satd_location']
 PROJECT_FIELDS = ['rank','name','language','codelines','age_years','stars','contributors',

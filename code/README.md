@@ -1,78 +1,85 @@
-# 代码入口与外部输入
+# 数据处理代码
 
-本仓库只保存最终数据。完整重建需要外部的原始 `repositories.csv`、保持原行序的 `workflows.csv` 和 `workflows/` YAML 内容目录；可从工作流历史数据来源获取对应归档。不要把最终 300 项目的元数据当作全部原始输入。
+按 `01 → 02 → 03` 的顺序运行。三个编号文件是入口，具体实现集中在 `utils/`。每个入口包含几个子命令，按下面的顺序执行即可。
 
-## 只检查最终数据
+```text
+code/
+├── 01_extract_candidates.py   # 提取注释、关键词匹配、排除问题文件
+├── 02_select_latest.py        # 关联历史、选择最新工作流、导出九字段
+├── 03_select_projects.py      # 统计活跃度、筛选并排名项目
+├── verify_dataset.py         # 校验最终数据
+├── keywords.txt              # 原研究的 73 个关键词
+├── requirements.txt          # Python 依赖
+└── utils/                    # 上述入口实际调用的处理实现和解析工具
+```
 
-Python ≥3.11：
+## 只查看和检查最终数据
+
+仓库中的 `dataset/` 已包含最终 1,046 条候选和 300 个项目。使用 Python ≥3.11 即可校验，无需安装第三方依赖：
 
 ```sh
 python code/verify_dataset.py
-python -m unittest discover -s code -p "test_*.py"
 ```
 
-不需要第三方依赖。检查文件行数、字段、项目关联和 SHA-256；不重新构建数据。
+此命令检查行数、九个字段、项目关联和文件校验值，不从原始数据重新筛选。
 
-## 从原始文件重建
+## 重新运行处理流程
 
-以下命令从仓库根目录执行。`external/raw/`、`external/selection/` 和 `output/` 均为运行者准备或生成的本地目录，不随仓库分发。`external/raw/` 须包含原始 `workflows.csv`、`repositories.csv` 和 `workflows/`。
+以下命令在仓库根目录执行。完整重建需要另外准备原始数据，最终的 300 项目表不能代替全量仓库表。
 
-安装解析依赖，原提取环境为 Python 3.12；提取 PowerShell 注释另需可用的 PowerShell 解析器：
+```text
+external/raw/
+  repositories.csv    原始全量仓库元数据
+  workflows.csv       保持原行序的工作流历史
+  workflows/          以 file_hash 命名的 YAML 内容文件
+```
+
+原运行环境为 Python 3.12；提取 PowerShell 脚本注释还需要可用的 PowerShell 解析器。安装依赖：
 
 ```sh
-python -m pip install -r code/internal/requirements-satd.txt
+python -m pip install -r code/requirements.txt
 ```
 
-### 提取注释、匹配关键词并排除问题文件
+### 01：提取候选
 
 ```sh
-python code/run.py extract --dataset-dir external/raw --output-dir output/extraction --workers 8
-python code/run.py export-readable --state PATH_TO_STATE_SQLITE --output-dir output/candidates
+python code/01_extract_candidates.py extract --dataset-dir external/raw --output-dir output/candidates --workers 8
+python code/01_extract_candidates.py filter --state PATH_TO_STATE_SQLITE --output-dir output/candidates
 ```
 
-`PATH_TO_STATE_SQLITE` 替换为提取程序打印的 checkpoint 路径。导出文件 `output/candidates/satd_comments.csv` 是完成整文件质量检查后的候选表。
+将 `PATH_TO_STATE_SQLITE` 替换为第一条命令打印的 `checkpoint` 路径。`filter` 使用同一个输出目录读取扫描报告并更新候选文件；必须完成此命令，才能得到排除了问题文件的 `output/candidates/satd_comments.csv`。
 
-### 关联工作流历史并选最新状态
+### 02：保留最新工作流
 
 ```sh
-python code/run.py link-history --candidates output/candidates/satd_comments.csv --history external/raw/workflows.csv --state PATH_TO_STATE_SQLITE --output output/history
-python code/run.py select-latest --versions output/history/workflow_versions.csv.gz --occurrences output/history/satd_occurrences.csv --output output/latest
-python code/run.py export-nine-columns --input output/latest/latest_satd_comments.csv --output external/selection/latest_candidates.csv
+python code/02_select_latest.py link --candidates output/candidates/satd_comments.csv --history external/raw/workflows.csv --state PATH_TO_STATE_SQLITE --output output/history
+python code/02_select_latest.py select --versions output/history/workflow_versions.csv.gz --occurrences output/history/satd_occurrences.csv --output output/latest
+python code/02_select_latest.py export --input output/latest/latest_satd_comments.csv --output external/selection/latest_candidates.csv
 ```
 
-历史关联脚本默认核对本研究冻结候选表的 SHA-256，防止无意替换输入。若研究不同版本，必须显式指定其 `--expected-sha`，不能把变更后结果当作本版精确复现。
+这里继续使用同一个 `checkpoint`。最新版本按原始历史记录顺序选择；不会用较旧的有效版本替代被删除或存在问题的最新版本。
 
-### 统计持续维护并选择项目
+`link` 默认核对本研究冻结候选表的 SHA-256。处理其他数据时须显式指定对应的 `--expected-sha`；不同输入的结果不属于本版数据的精确复现。
 
-将原始仓库元数据复制为 `external/selection/repositories.csv`，然后执行：
+### 03：选择项目
+
+先将原始全量 `external/raw/repositories.csv` 复制为 `external/selection/repositories.csv`，然后运行：
 
 ```sh
-python code/build_activity.py --workflows external/raw/workflows.csv --repositories external/selection/repositories.csv --output external/selection/workflow_activity_monthly.csv
-python code/select_projects.py --inputs external/selection --output output/final
+python code/03_select_projects.py activity --workflows external/raw/workflows.csv --repositories external/selection/repositories.csv --output external/selection/workflow_activity_monthly.csv
+python code/03_select_projects.py select --inputs external/selection --output output/final
 ```
 
-项目选择程序读取这三份外部表：
+`select` 读取最新候选、全量仓库元数据和月度工作流活动三张表，执行原有资格条件以及规模、年龄、stars 等权排名，并与 `dataset/` 逐字段比较。相同输入应得到 **300 个项目、1,046 条候选**；输出为 `output/final/projects.csv` 和 `output/final/satd_comments.csv`。只验证而不生成文件时添加 `--verify-only`。
 
-| 外部输入 | 用途 |
-|---|---|
-| latest_candidates.csv | 11,095 条最新候选，九字段 |
-| repositories.csv | 仓库年龄、提交数、贡献者、代码量和 stars |
-| workflow_activity_monthly.csv | name、month、workflow_commits；未出现的月份计零 |
+`external/` 和 `output/` 是本地输入、输出目录，不随仓库分发。历史关联、最新选择、最终导出应使用新的输出目录；提取中断后可用 `extract --resume` 续跑同一检查点。目录整理改变了代码指纹，旧代码生成的提取检查点不能用于新代码的 `--resume`。
 
-程序重新执行资格条件、三项百分位排名、等权合成和 Top 300 选择，并与 `dataset/` 的最终表逐字段比较。相同输入应得到 300 个仓库和 1,046 条候选。无需写输出时添加 `--verify-only`。输入不一致或目标目录非空时停止，不覆盖原表。
+## 查看参数
 
-## 文件职责
+每个子命令都支持 `--help`，例如：
 
-| 文件或目录 | 职责 |
-|---|---|
-| run.py | 将可读命令映射到原实现，传递参数 |
-| build_activity.py | 根据提交哈希去重并按 UTC 月份统计工作流变化 |
-| select_projects.py | 资格条件、并列平均排名、等权综合分及候选导出 |
-| verify_dataset.py | 最终文件检查 |
-| internal/scripts/ | YAML 和嵌入脚本注释提取、位置绑定、扫描 |
-| internal/config/ | 原研究的 73 个关键词 |
-| internal/reference/ | 固定上游实现、词表、许可和来源校验值 |
-| internal/postprocess/ | 整文件过滤、历史关联和最新版本选择 |
-| internal/tests/ | 提取与历史处理测试 |
+```sh
+python code/02_select_latest.py select --help
+```
 
-查看每个底层命令的参数：`python code/run.py select-latest --help`。使用已安装解析依赖的环境运行底层测试：`python -m pytest code/internal/tests -q`。移动目录未改变底层筛选和匹配算法。
+本目录只包含实际处理和校验所需的代码。原研究的 Maven 实现请访问上游仓库；来源和许可见 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md)。
