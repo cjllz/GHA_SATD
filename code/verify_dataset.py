@@ -1,4 +1,4 @@
-"""Verify the final 1,046-row dataset without downloading intermediate inputs."""
+"""Verify the 1,046 candidates and 876 reviewed rows without raw inputs."""
 import argparse
 import hashlib
 import json
@@ -25,10 +25,16 @@ def verify_final(dataset):
     for i,r in enumerate(projects,1):
         assert int(r['rank'])==i and counts[r['name']]==int(r['satd_candidate_count'])
     assert projects==sorted(projects,key=lambda r:(-float(r['composite_score']),r['name']))
+    rf,reviewed=read(dataset/'satd_comments_reviewed.csv')
+    assert rf==FIELDS and len(reviewed)==876
+    rowkey=lambda r:tuple(r[f] for f in FIELDS)
+    available=Counter(rowkey(r) for r in comments)
+    assert not (Counter(rowkey(r) for r in reviewed)-available)
+    assert len({n for r in reviewed for n in json.loads(r['name'])})==263
     for relative,item in json.loads((dataset/'checksums.json').read_text(encoding='utf-8')).items():
         with (dataset/Path(relative).relative_to('dataset')).open('rb') as f:
             assert hashlib.file_digest(f,'sha256').hexdigest()==item['sha256']
-    return dict(projects=300,candidate_occurrences=1046,fields=9,checksums_match=True,
+    return dict(projects=300,candidate_occurrences=1046,reviewed_occurrences=876,fields=9,checksums_match=True,
                 scope='Final files only; this check does not rebuild selection from raw data')
 
 
