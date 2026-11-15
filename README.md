@@ -22,7 +22,7 @@
 code/                     数据处理代码与运行说明
 dataset/
   satd_comments.csv       1,046 条原始候选注释
-  satd_comments_reviewed.csv  870 条人工复核确认版（AI 辅助）
+  satd_comments_reviewed.csv  870 条人工复核确认版
   projects.csv            对应的 300 个仓库及其指标
   README.md               字段说明
   checksums.json          数据文件校验值
