@@ -1,4 +1,4 @@
-"""1. Extract keyword candidates, then exclude unreadable workflow files."""
+"""2. Extract keyword candidates, then exclude unreadable workflow files."""
 from pathlib import Path
 import sys
 

@@ -1,4 +1,4 @@
-"""Randomly sample keyword-nonhit comments with finite-population correction."""
+"""4. Randomly sample keyword-nonhit comments with finite-population correction."""
 
 import argparse
 import csv

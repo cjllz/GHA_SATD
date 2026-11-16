@@ -1,4 +1,4 @@
-"""2. Link candidates to workflow history and keep the latest observed workflows."""
+"""3. Link candidates to workflow history and keep the latest observed workflows."""
 from pathlib import Path
 import sys
 

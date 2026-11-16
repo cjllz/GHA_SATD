@@ -1,4 +1,4 @@
-"""Run first: select Top 300 projects independently of SATD extraction."""
+"""1. Select Top 300 projects independently of SATD extraction."""
 from pathlib import Path
 import sys
 
