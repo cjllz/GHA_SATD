@@ -1,4 +1,4 @@
-"""3. Measure workflow activity, select Top 300 projects and export their candidates."""
+"""Run first: select Top 300 projects independently of SATD extraction."""
 from pathlib import Path
 import sys
 
@@ -8,6 +8,6 @@ from cli import dispatch
 
 if __name__ == '__main__':
     raise SystemExit(dispatch(__doc__, {
-        'activity': ('build_activity.py', 'Count distinct workflow commits per repository and month'),
-        'select': ('select_projects.py', 'Apply eligibility rules and rank size, age and stars equally'),
+        'activity': ('build_activity.py', 'Count monthly workflow commits for all repositories'),
+        'select': ('select_projects.py', 'Select Top 300 without using comments or SATD candidates'),
     }))
